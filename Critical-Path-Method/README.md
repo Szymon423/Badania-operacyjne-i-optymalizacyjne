@@ -1,9 +1,4 @@
-# Badania_operacyjne_i_optymalizacyjne
-## Laborka PWR ISA 2 sem
-
-## Całość działa, 
-Można przerobić to na OOP i będzie super
-
+# Critical Path Method
 
 ## Wynik działania algorytmu
 
