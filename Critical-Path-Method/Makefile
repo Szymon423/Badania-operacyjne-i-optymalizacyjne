@@ -10,7 +10,7 @@ LDFLAGS =
 # Makefile settings - Can be customized.
 APPNAME = APP
 EXT = .cpp
-SRCDIR = /home/szymon/projekty-PWR/Badania-operacyjne-i-optymalizacyjne/Critical-Path-Method/src
+SRCDIR = E:\Edukacja\Politechnika\Studia-Magisterskie\2-semestr\Badania-operacyjne-i-optymalizacyjne\Critical-Path-Method\src
 OBJDIR = obj
 
 ############## Do not change anything from here downwards! #############
