@@ -10,13 +10,13 @@ using namespace std;
 
 int main() {
 
-    CRP test;
-    test.importData("test/data_1.txt");
-    test.printTaskTimes();
-    test.printAdjacencyMatrix();
-    test.findProcessTime();
-    test.findTaskTimes();
-    test.findCRP();
+    CRP task;
+    task.importData("test/data_1.txt");
+    task.printTaskTimes();
+    task.printAdjacencyMatrix();
+    task.findProcessTime();
+    task.findTaskTimes();
+    task.findCRP();
     
     system("pause");
 
