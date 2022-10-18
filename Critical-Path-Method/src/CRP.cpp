@@ -203,7 +203,7 @@ void CRP::findCRP() {
 
     // wyświetlenie CRP
     printf("\n\n");
-    for (int i = 0; i<(int)CRP::CritPath.size(); i++) {
+    for (int i = 0; i<static_cast<int>(CRP::CritPath.size()); i++) {
         printf("%3d %3d %3d\n", CRP::CritPath[i][0], CRP::CritPath[i][1], CRP::CritPath[i][2]);
     }
     return;
