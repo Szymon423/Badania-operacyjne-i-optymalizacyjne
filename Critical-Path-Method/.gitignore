@@ -3,3 +3,4 @@ obj/main.o
 APP.exe
 CRP.d
 main.d
+Makefile
