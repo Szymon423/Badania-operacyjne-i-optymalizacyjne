@@ -1,4 +1,5 @@
-obj
+obj/CRP.obj
+obj/main.o
 APP.exe
 CRP.d
 main.d
