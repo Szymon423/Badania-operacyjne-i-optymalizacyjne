@@ -14,10 +14,10 @@ using namespace std;
 PERT::PERT() {
     PERT::N = 0;
     PERT::M = 0;
-    PERT::processTime = 0;
+    PERT::processTime = 0.0;
     PERT::cycle = false;
-    PERT::CRPwar = 0;
-    PERT::CRPtime = 0;
+    PERT::CRPwar = 0.0;
+    PERT::CRPtime = 0.0;
 }
 
 PERT::~PERT() {}
@@ -49,7 +49,7 @@ void PERT::importData(string fileName) {
         PERT::inputTripleTime.push_back(hlp_);
 
         Toper = (hlp_[0] + 4*hlp_[1] + hlp_[2]) / 6.0;
-        float calculateThis = (hlp_[2] - hlp_[1])/6;
+        float calculateThis = (hlp_[2] - hlp_[0]) / 6.0;
         calculateThis *= calculateThis;
         PERT::war.push_back(calculateThis);
         PERT::P.push_back(Toper);
@@ -88,7 +88,7 @@ void PERT::importData(string fileName) {
  void PERT::printTaskTimes() {
      printf("\n");
      for (int i = 0; i < PERT::N; i++) {
-         printf("%3f", PERT::P[i]);
+         printf("%.1f   ", PERT::P[i]);
      }
      printf("\n\n");
      return;
@@ -201,10 +201,12 @@ void PERT::findCRP() {
     vector <float> PERT_sub (4, 0.0);
 
     for (int i = 0; i<PERT::N; i++) {
-        // sprawdzenie warunku czy czynność należy do PERT
-        if (abs(PERT::TaskTimes[i][2] - PERT::TaskTimes[i][0]) > 0.1) {
-            // jeśli tak, to create helping vector i dodaj do TF
-            PERT_sub[0] = i+1;  PERT_sub[1] = PERT::TaskTimes[i][0]; PERT_sub[2] = PERT::TaskTimes[i][1]; PERT_sub[3] = PERT::war[i];
+        // sprawdzenie warunku czy czynność należy do CRP
+        if (abs(PERT::TaskTimes[i][2] - PERT::TaskTimes[i][0]) < 0.1) {
+            PERT_sub[0] = i+1;
+            PERT_sub[1] = PERT::TaskTimes[i][0]; 
+            PERT_sub[2] = PERT::TaskTimes[i][1]; 
+            PERT_sub[3] = PERT::war[i];
             PERT::CritPath.push_back(PERT_sub);
         }
     }
@@ -220,9 +222,14 @@ void PERT::findCRP() {
         PERT::CRPtime += PERT::P[PERT::CritPath[i][0]-1];
     }
 
-    printf("\nOdchylenie standardowe: %f\n", sqrt(PERT::CRPwar));
-    printf("\nCzas projektu: %f\n", PERT::CRPtime);
-
+    printf("\nCzas projektu: %f", PERT::CRPtime);
+    printf("\nOdchylenie standardowe: %.2f\n", sqrt(PERT::CRPwar));
     return;
+}
+
+float PERT::finishPossibilityIn(float duration) {
+    float possibility {0.0};
+    
+    return possibility;
 }
 

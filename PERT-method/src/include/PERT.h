@@ -32,6 +32,8 @@ class PERT {
         void findProcessTime();
         void findTaskTimes();
         void findCRP();
+        float finishPossibilityIn(float duration);
+        float projectLenthWithPossibility(float possibility);
         
 };
 
