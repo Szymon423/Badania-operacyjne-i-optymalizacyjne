@@ -10,7 +10,7 @@ LDFLAGS =
 # Makefile settings - Can be customized.
 APPNAME = myapp
 EXT = .cpp
-SRCDIR = /home/szymon/projekty-PWR/Badania-operacyjne-i-optymalizacyjne/PERT-method/src
+SRCDIR = D:\Szymon\Projekty-prywatne\PWR\Badania-operacyjne-i-optymalizacyjne\PERT-method\src
 OBJDIR = obj
 
 ############## Do not change anything from here downwards! #############

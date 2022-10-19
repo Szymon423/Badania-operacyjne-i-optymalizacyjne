@@ -29,7 +29,7 @@ CRP::~CRP() {}
       file >> CRP::N >> CRP::M;
 
       // wektor pomocniczy do utworzenia macierzy X
-      vector <int> help(CRP::N);
+      vector <int> help(CRP::N, 0);
 
       // tworzenie macierzy X
       for (int i = 0; i < CRP::N; i++) {
@@ -115,7 +115,7 @@ void CRP::findProcessTime() {
     // szukanie największej wartości:
     CRP::processTime = CRP::C[0];
     for (int i = 0; i< CRP::N; i++) CRP::processTime = max(CRP::C[i], CRP::processTime);
-    printf("\n\nProcess time: %d\n\n", CRP::processTime);
+    printf("\n\nProcess time: %f\n\n", CRP::processTime);
     return;
  }
 
