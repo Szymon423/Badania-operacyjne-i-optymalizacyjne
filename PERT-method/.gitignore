@@ -1,0 +1,6 @@
+obj/CRP.obj
+obj/main.o
+myapp.exe
+CRP.d
+main.d
+Makefile
