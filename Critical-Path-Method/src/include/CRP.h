@@ -16,8 +16,11 @@ class CRP {
 
      private:
          bool cycle;
-         vector <int> P;
-         vector <int> C;
+         vector <int> taskDuration;
+         vector <int> earlyStart;
+         vector <int> earlyFinish;
+         vector <int> lateStart;
+         vector <int> lateFinish;
 
     public:
         CRP();
