@@ -1,4 +1,4 @@
-#include "include/CRP.h"
+#include "CRP.h"
 
 #include <algorithm>
 #include <functional>
@@ -36,13 +36,17 @@ CRP::~CRP() {}
           CRP::X.push_back(help);
       }
 
-      // stworzenie macierzy C z wartościami początkowymi jak z wektora P
+      // stworzenie wektora taskDuration oraz earlyFinish z wartościami początkowymi jak z wektora P
+      // oraz stworzenie pozostałych wektorów ES, LF, LS z wartościami zerowymi
       // odczytanie drugiej linijki z danych
       int hlp_ = 0;
       for (int i=0; i<CRP::N; i++) {
           file >> hlp_;
-          CRP::P.push_back(hlp_);
-          CRP::C.push_back(hlp_);
+          CRP::taskDuration.push_back(hlp_);
+          CRP::earlyFinish.push_back(hlp_);
+          CRP::earlyStart.push_back(0);
+          CRP::lateFinish.push_back(0);
+          CRP::lateStart.push_back(0);
       }
 
       // odczytanie pozostałych rzeczy
@@ -77,7 +81,7 @@ CRP::~CRP() {}
  void CRP::printTaskTimes() {
      printf("\n");
      for (int i = 0; i < CRP::N; i++) {
-         printf("%3d", CRP::P[i]);
+         printf("%3d", CRP::taskDuration[i]);
      }
      printf("\n\n");
      return;
@@ -95,15 +99,17 @@ void CRP::findProcessTime() {
             // iteracja przez kolumny
             for (int b = 0; b<CRP::N; b++) { 
                 if (X[a][b] == 1) {
-                    // CRP::C[b] = max(CRP::C[a] + CRP::P[b], CRP::C[b]);
-                    if (CRP::C[a] + CRP::P[b] > CRP::C[b]) {
-                        CRP::C[b] = CRP::C[a] + CRP::P[b];
+                    if (CRP::earlyFinish[a] + CRP::taskDuration[b] > CRP::earlyFinish[b]) {
+                        CRP::earlyFinish[b] = CRP::earlyFinish[a] + CRP::taskDuration[b];
                         cnt++;
                     }
                 }
             }
         }
     }
+    printf("\n\n");
+    for (int i = 0; i < CRP::N; i++) printf("%5d  ", CRP::earlyFinish[i]);
+    printf("\n\n");
 
     // sprawdzenie czy wykryto cykl blokujący
     if (cnt > 0) {
@@ -113,8 +119,8 @@ void CRP::findProcessTime() {
     }
 
     // szukanie największej wartości:
-    CRP::processTime = CRP::C[0];
-    for (int i = 0; i< CRP::N; i++) CRP::processTime = max(CRP::C[i], CRP::processTime);
+    CRP::processTime = CRP::earlyFinish[0];
+    for (int i = 0; i< CRP::N; i++) CRP::processTime = max(CRP::earlyFinish[i], CRP::processTime);
     printf("\n\nProcess time: %f\n\n", CRP::processTime);
     return;
  }
@@ -123,15 +129,9 @@ void CRP::findTaskTimes() {
     // sprawdzenie czy wykryto cykl blokujący
     if (CRP::cycle) return;
     
-    // przygotowanie wektorów z czasami
-    vector <int> earlyStart(CRP::N, 0);
-    vector <int> earlyFinish(CRP::N, 0);
-    vector <int> lateStart(CRP::N, 0);
-    vector <int> lateFinish(CRP::N, 0);
-
     // Przypisanie do wektora D odpowiednich wartości początkowych
     for (int i = 0; i < CRP::N; i++) {
-        lateStart[i] = CRP::processTime - CRP::P[i];
+        CRP::lateStart[i] = CRP::processTime - CRP::taskDuration[i];
     }
 
     // iteracja n razy, aby uniknąć konieczności wyznaczania kolejności
@@ -141,24 +141,23 @@ void CRP::findTaskTimes() {
             // iteracja przez wiersze
             for (int a = 0; a < CRP::N; a++) {
                 if (X[a][b] == 1) {
-                    earlyStart[b] = max(earlyStart[b], C[a]);
-                    lateStart[a] = min(lateStart[b] - P[a], lateStart[a]);
+                    CRP::lateStart[a] = min(CRP::lateStart[b] - CRP::taskDuration[a], CRP::lateStart[a]);
                 }
             }
-            earlyFinish[b] = earlyStart[b] + P[b];
         }
     }
 
     // obliczenie ostatecznych warości startu i finishu
     for(int i=0; i<CRP::N; i++) {
-        lateFinish[i] = lateStart[i] + CRP::P[i];
+        CRP::lateFinish[i] = CRP::lateStart[i] + CRP::taskDuration[i];
+        CRP::earlyStart[i] = CRP::earlyFinish[i] - CRP::taskDuration[i];
     }
     vector <int> help(4, 0);
 
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j<CRP::N; j++) {
-            help[0] = earlyStart[j];    help[1] = earlyFinish[j];
-            help[2] = lateStart[j];     help[3] = lateFinish[j];
+            help[0] = CRP::earlyStart[j];    help[1] = CRP::earlyFinish[j];
+            help[2] = CRP::lateStart[j];     help[3] = CRP::lateFinish[j];
             CRP::TaskTimes.push_back(help);
         }
     }
@@ -208,4 +207,3 @@ void CRP::findCRP() {
     }
     return;
 }
-
