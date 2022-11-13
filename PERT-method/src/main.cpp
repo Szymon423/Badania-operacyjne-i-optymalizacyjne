@@ -3,8 +3,9 @@
 #include <algorithm>
 #include <functional>
 #include <vector>
+#include <iomanip>
 
-#include "include/PERT.h"
+#include "PERT.h"
 
 using namespace std;
 
@@ -17,8 +18,10 @@ int main() {
     task.findProcessTime();
     task.findTaskTimes();
     task.findCRP();
-    
-    
+    task.dys();
+    cout << setprecision(4) << "\nOdwrotna dystrybuanta wynosi: " << task.inv_dys(task.Y) << endl;
+    task.time_day();
+   
     system("pause");
 
     return 0;
