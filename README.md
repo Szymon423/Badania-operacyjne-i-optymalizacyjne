@@ -3,4 +3,5 @@ Repo do składowania kodów pochodzących z ww laborki
 
 ## Kolejne laboratoria
 1. CRP ✅
-2. PERT 
+2. PERT ✅
+3. Dijkstra's algorithm
