@@ -3,6 +3,7 @@
 
 BellmanFord::BellmanFord() {
 	BellmanFord::N = 0;
+	BellmanFord::cnt = 0;
 }
 
 BellmanFord::~BellmanFord() {
@@ -45,10 +46,12 @@ void BellmanFord::doAllMagic() {
 			for (int b = 0; b < BellmanFord::N; b++) {
 				if (BellmanFord::X.at(a).at(b) > 0) {
 					BellmanFord::dist[b] = min(BellmanFord::dist[b], BellmanFord::dist[a] + X.at(a).at(b));
+					BellmanFord::cnt++;
 				}
 			}
 		}
 	}
+	return;
 }
 
 
@@ -57,5 +60,7 @@ void BellmanFord::show() {
 	for (int a = 0; a < BellmanFord::N; a++) {
 		cout << a + 1 << " \t\t" << BellmanFord::dist.at(a) << endl;
 	}
+	cout << endl << "Liczba operacji dla Bellmana Forda: " << BellmanFord::cnt << endl;
+	return;
 }
 
