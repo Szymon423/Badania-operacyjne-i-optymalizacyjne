@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class Djikstra {
+class Dijkstra {
 private:
 	int N;
 	vector <vector <int>> X;
@@ -14,6 +14,7 @@ private:
 	vector <int> path;
 	bool cycle;
 	int src;
+	int cnt;
 	
 public:
 
@@ -21,8 +22,8 @@ private:
 	int minNeighbour();
 	void printPath(int, vector <int>);
 public:
-	Djikstra();
-	~Djikstra();
+	Dijkstra();
+	~Dijkstra();
 	void importData(string);
 	void show();
 	void doAllMagic();
