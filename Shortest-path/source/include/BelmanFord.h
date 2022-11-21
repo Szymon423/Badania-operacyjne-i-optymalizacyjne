@@ -10,6 +10,7 @@ private:
 	int N;
 	vector <vector <int>> X;
 	vector <int> dist;
+	int cnt;
 
 public:
 	
