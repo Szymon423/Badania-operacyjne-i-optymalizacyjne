@@ -13,7 +13,7 @@ class TSP:
     changesOccured = True
 
     def __init__(self):
-        print("dupa")
+        pass
 
     
     def importData(self, path):
@@ -42,14 +42,14 @@ class TSP:
             else:
                 self.tour[i + 1] = i + 1
         self.tour[self.n] = start_city
-        print(self.tour)
+        # print(self.tour)
 
     def calculateDistances(self):
         self.distances = np.zeros((self.n, self.n))
         for i in range(self.n):
             for j in range(self.n):
                 self.distances[i][j] = np.sqrt((self.graf[i][0] - self.graf[j][0]) ** 2 + (self.graf[i][1] - self.graf[j][1]) ** 2)
-        print(self.distances)
+        # print(self.distances)
 
     def calculateLength(self, currentTour):
         len = 0
@@ -105,17 +105,17 @@ class TSP:
             for i in range(1, self.n):
                 # pętla iterująca przez miasta podlegające permutacjom
                 for j in range(1, self.n):
-                    # dodać omijanie sąsiednich elementów
+                    # omijanie sąsiednich elementów
+                    if not (i == j or i - 1 == j or i + 1 == j):
+                        # do tablicy z aktualną permutacją zapisujemy pewną permutację stworzoną z permutacji
+                        # stanowiącej najlepszą w poprzedniej iteracji while-a
+                        currentTour = self.swap(self.tour, i, j)
 
-                    # do tablicy z aktualną permutacją zapisujemy pewną permutację stworzoną z permutacji
-                    # stanowiącej najlepszą w poprzedniej iteracji while-a
-                    currentTour = self.swap(self.tour, i, j)
-
-                    # sprawdzamy, czy stworzona właśnie permutacja jest lepsza od najlepszej jaką stworzyliśmy
-                    # w tej iteracji while-a
-                    if self.calculateLength(currentTour) < self.calculateLength(currentMinTour):
-                        #jeśli tak, to zapisujemy ją do najlepszej w bieżącej iteracji while-a
-                        currentMinTour = currentTour
+                        # sprawdzamy, czy stworzona właśnie permutacja jest lepsza od najlepszej jaką stworzyliśmy
+                        # w tej iteracji while-a
+                        if self.calculateLength(currentTour) < self.calculateLength(currentMinTour):
+                            #jeśli tak, to zapisujemy ją do najlepszej w bieżącej iteracji while-a
+                            currentMinTour = currentTour
             
             # sprawdzenie, czy znalezione minium jest mniejsze od globalnego minimum
             if self.calculateLength(currentMinTour) < self.calculateLength(self.tour):
@@ -125,7 +125,61 @@ class TSP:
                 # dodatkowo określamy, że pojawiła się zmiana
                 self.changesOccured = True
            
-        print(self.tour.astype(int))
-        print(self.calculateLength(self.tour))
+        # print(self.tour.astype(int))
+        print("dlugosc trasy: " + str(self.calculateLength(self.tour)))
+        
+
+
+    def Power(self, currentBestTour, newTour, temperature):
+        # obliczenie długości obu tras
+        currentBestLen = self.calculateLength(currentBestTour)
+        newLen = self.calculateLength(newTour)
+
+        # jesli wylosowane rozwiązanie jest lepsze od aktualnego,
+        # zaktualizuj aktualne
+        if newLen <= currentBestLen:
+            # zawsze będzie większe od zakresu [0, 1]
+            return 2
+        
+        # obliczenie różnicy pomiędzy długościami tras
+        difference = currentBestLen - newLen
+
+        # obliczenie prawdopodobieństwa dla akceptacji
+        # wraz ze wzrostem różnicy odległości ono maleje, 
+        # jednakowo dla temperatury - im mniejsza tym mniejsze prawd.
+        propabilityOfAcceptance = 1 / difference * temperature
+        
+        return propabilityOfAcceptance
+
+
+    def SA(self, maxIteration, kmax):
+
+        # tablica zawierająca aktualnie wygenerowaną permutację
+        newTour = np.copy(self.tour)
+
+        # tablica z minimalną permutacją w każdej iteracji while-a
+        currentMinTour = np.copy(self.tour)      
+
+        for k in range(maxIteration):
+            # obliczamy aktualną temperaturę
+            if k <= kmax:
+                temp = 1 - (k + 1) / kmax
+            else:
+                temp = 1 / kmax
+
+            # szukamy losowo krawędzi do stworzenia rozwiązania
+            i = np.random.randint(1, self.n)
+            j = np.random.randint(1, self.n)
+
+            # generujemy te rozwiązanie
+            newTour = self.swap(self.tour, i, j)
+            
+            # sprawdzamy, czy spełnia warunki przyjęcia 
+            if self.Power(self.tour, newTour, temp) >= np.random.rand():
+                self.tour = newTour
+
+           
+        # print(self.tour.astype(int))
+        print("dlugosc trasy: " + str(self.calculateLength(self.tour)))
 
 
