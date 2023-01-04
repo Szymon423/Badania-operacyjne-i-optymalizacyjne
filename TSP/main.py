@@ -1,9 +1,14 @@
 import time
 import numpy as np
 import tsp 
+from generator import generatePoints
+
+
+### generowanie naszych własnych danych testowych:
+generatePoints(30, (100, 100), "test\\dupa.txt")
 
 # okreslenie ścieżki do pliku testowego
-file = "test\\data_51.txt"
+file = "test\\dupa.txt"
 
 # inicjalizacja obiektu 
 test = tsp.TSP()
@@ -15,17 +20,17 @@ test.importData(file)
 test.createFirstTour(3)
 
 # określenie max liczby interacji dla SA
-maxIterationNumber = 50_000
+maxIterationNumber = 100_000
 
 # określenie max temperatury dla SA
-maxTemperature = 10
+maxTemperature = 15
 
 # odaplamy timer
 start = time.time_ns()
 
 # nasze dwa algorytmy do testów
-# test.SA(maxIterationNumber, maxTemperature)
-test.opt2()
+test.SA(maxIterationNumber, maxTemperature)
+# test.opt2()
 
 # znowu odpalamy timer
 finish = time.time_ns()
