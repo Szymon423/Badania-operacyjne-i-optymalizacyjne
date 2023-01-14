@@ -14,7 +14,7 @@ Dijkstra::~Dijkstra() {
 
 }
 
-void Dijkstra::importData(string path) {
+void Dijkstra::importData(const string& path) {
 	ifstream f(path);
 
 	// odczytanie wartości N
