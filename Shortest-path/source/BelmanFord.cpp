@@ -1,13 +1,10 @@
 #include "BellmanFord.h"
 #include <fstream>
 
-BellmanFord::BellmanFord() {
-	BellmanFord::N = 0;
-	BellmanFord::cnt = 0;
+BellmanFord::BellmanFord() : N(0), cnt(0) {
 }
 
 BellmanFord::~BellmanFord() {
-
 }
 
 void BellmanFord::importData(string path) {
