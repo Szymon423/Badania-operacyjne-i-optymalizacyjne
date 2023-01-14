@@ -7,7 +7,7 @@ BellmanFord::BellmanFord() : N(0), cnt(0) {
 BellmanFord::~BellmanFord() {
 }
 
-void BellmanFord::importData(string path) {
+void BellmanFord::importData(const string& path) {
 	ifstream f(path);
 
 	// odczytanie wartości N
