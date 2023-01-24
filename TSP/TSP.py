@@ -52,10 +52,10 @@ class TSP:
         # print(self.distances)
 
     def calculateLength(self, currentTour):
-        len = 0
-        for i in range(self.n):
-            len += self.distances[int(currentTour[i])][int(currentTour[i + 1])]
-        return len
+        _len = 0
+        for i in range(len(currentTour) - 1):
+            _len += self.distances[int(currentTour[i])][int(currentTour[i + 1])]
+        return _len
 
     def swap(self, currentTour, i, j):
 
@@ -105,17 +105,17 @@ class TSP:
             for i in range(1, self.n):
                 # pętla iterująca przez miasta podlegające permutacjom
                 for j in range(1, self.n):
-                    # omijanie sąsiednich elementów
-                    if not (i == j or i - 1 == j or i + 1 == j):
-                        # do tablicy z aktualną permutacją zapisujemy pewną permutację stworzoną z permutacji
-                        # stanowiącej najlepszą w poprzedniej iteracji while-a
-                        currentTour = self.swap(self.tour, i, j)
+                    # dodać omijanie sąsiednich elementów
 
-                        # sprawdzamy, czy stworzona właśnie permutacja jest lepsza od najlepszej jaką stworzyliśmy
-                        # w tej iteracji while-a
-                        if self.calculateLength(currentTour) < self.calculateLength(currentMinTour):
-                            #jeśli tak, to zapisujemy ją do najlepszej w bieżącej iteracji while-a
-                            currentMinTour = currentTour
+                    # do tablicy z aktualną permutacją zapisujemy pewną permutację stworzoną z permutacji
+                    # stanowiącej najlepszą w poprzedniej iteracji while-a
+                    currentTour = self.swap(self.tour, i, j)
+
+                    # sprawdzamy, czy stworzona właśnie permutacja jest lepsza od najlepszej jaką stworzyliśmy
+                    # w tej iteracji while-a
+                    if self.calculateLength(currentTour) < self.calculateLength(currentMinTour):
+                        #jeśli tak, to zapisujemy ją do najlepszej w bieżącej iteracji while-a
+                        currentMinTour = currentTour
             
             # sprawdzenie, czy znalezione minium jest mniejsze od globalnego minimum
             if self.calculateLength(currentMinTour) < self.calculateLength(self.tour):
@@ -125,61 +125,91 @@ class TSP:
                 # dodatkowo określamy, że pojawiła się zmiana
                 self.changesOccured = True
            
-        # print(self.tour.astype(int))
-        print("dlugosc trasy: " + str(self.calculateLength(self.tour)))
-        
+        print(self.tour.astype(int))
+        print(self.calculateLength(self.tour))
 
-
-    def Power(self, currentBestTour, newTour, temperature):
-        # obliczenie długości obu tras
-        currentBestLen = self.calculateLength(currentBestTour)
-        newLen = self.calculateLength(newTour)
-
-        # jesli wylosowane rozwiązanie jest lepsze od aktualnego,
-        # zaktualizuj aktualne
-        if newLen <= currentBestLen:
-            # zawsze będzie większe od zakresu [0, 1]
-            return 2
-        
-        # obliczenie różnicy pomiędzy długościami tras
-        difference = currentBestLen - newLen
-
-        # obliczenie prawdopodobieństwa dla akceptacji
-        # wraz ze wzrostem różnicy odległości ono maleje, 
-        # jednakowo dla temperatury - im mniejsza tym mniejsze prawd.
-        propabilityOfAcceptance = 1 / difference * temperature
-        
-        return propabilityOfAcceptance
-
-
-    def SA(self, maxIteration, kmax):
-
+    def simulatedAnnealing(self):
         # tablica zawierająca aktualnie wygenerowaną permutację
-        newTour = np.copy(self.tour)
+        currentTour = np.copy(self.tour)
 
         # tablica z minimalną permutacją w każdej iteracji while-a
-        currentMinTour = np.copy(self.tour)      
+        currentMinTour = np.copy(self.tour)
 
-        for k in range(maxIteration):
-            # obliczamy aktualną temperaturę
-            if k <= kmax:
-                temp = 1 - (k + 1) / kmax
-            else:
-                temp = 1 / kmax
+        # szukamy kolejnych permutacji jeżeli poprzednia znaleziona była lepszą lub
+        # jeżeli nie znaleźliśmy nic lepszego to lecimy dodatkowo jesszcze jedną iterację while-a 
+        while self.changesOccured:
+            # uznajemy, że nie pojawiły się żadne zmiany
+            self.changesOccured = False
 
-            # szukamy losowo krawędzi do stworzenia rozwiązania
-            i = np.random.randint(1, self.n)
-            j = np.random.randint(1, self.n)
-
-            # generujemy te rozwiązanie
-            newTour = self.swap(self.tour, i, j)
+            # tutaj należy wprowadzić wybór krawędzi do swap-a w sposób randomowy
             
-            # sprawdzamy, czy spełnia warunki przyjęcia 
-            if self.Power(self.tour, newTour, temp) >= np.random.rand():
-                self.tour = newTour
 
+            # sprawdzenie, czy znalezione minium jest mniejsze od globalnego minimum
+            if self.calculateLength(currentMinTour) < self.calculateLength(self.tour):
+                # jeśli tak, to zapisujemy je do minimalnej, globalnej permutacji
+                self.tour = currentMinTour
+
+                # dodatkowo określamy, że pojawiła się zmiana
+                self.changesOccured = True
            
-        # print(self.tour.astype(int))
-        print("dlugosc trasy: " + str(self.calculateLength(self.tour)))
+        print(self.tour.astype(int))
+        print(self.calculateLength(self.tour))
 
 
+    def dp(self, distances):
+
+        n = len(distances)
+        empty = np.zeros((n + 1, n + 1))
+        empty[1:, 1:] = distances
+        distances = empty.copy()
+
+        memo = [[-1]*(1 << (n+1)) for _ in range(n+1)]
+        
+        ans = 10**9
+        for i in range(1, n+1):
+            ans = min(ans, fun(i, (1 << (n+1))-1, memo, distances) + distances[i][1])
+        return ans
+
+def fun(i, mask, memo, distance):
+    n = len(distance)
+
+    if mask == ((1 << i) | 3):
+        return distance[1][i]
+
+    # memoization
+    if memo[i][mask] != -1:
+        return memo[i][mask]
+
+    res = 10**9
+
+    for j in range(1, n + 1):
+        if (mask & (1 << j)) != 0 and j != i and j != 1:
+            res = min(res, fun(j, mask & (~(1 << i)), memo, distance) + distance[j][i])
+    memo[i][mask] = res
+    return res
+
+def generatePoints(n, canvasSize, name="test//data_new.txt"):
+    x = 0
+    y = 1
+    points = np.zeros((n, 2))
+    
+
+    points[0][x] = np.random.randint(1, canvasSize[x])
+    points[0][y] = np.random.randint(1, canvasSize[y])
+
+    for i in range(1, n):
+        isOk = False
+        while not isOk:
+            isOk = True
+            newX = np.random.randint(1, canvasSize[x])
+            newY = np.random.randint(1, canvasSize[y])
+            
+            for j in range(i):
+                if points[j][x] == newX:
+                    if points[j][y] == newY:
+                        isOk = False
+                    
+        points[i][x] = newX
+        points[i][y] = newY
+    
+    np.savetxt(name, points, header=str(n), comments = "", fmt = '%i')
